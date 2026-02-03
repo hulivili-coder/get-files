@@ -1,0 +1,63 @@
+import sqlite3
+
+conn = sqlite3.connect("eventus.db")
+c = conn.cursor()
+
+# Create the necessary tables
+c.execute("""
+CREATE TABLE IF NOT EXISTS events (
+    event_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT,
+    description TEXT,
+    creator_id INTEGER,
+    start_time TEXT,
+    end_time TEXT,
+    rsvp_list TEXT,
+    archived INTEGER DEFAULT 0
+)
+""")
+
+c.execute("""
+CREATE TABLE IF NOT EXISTS users (
+    user_id INTEGER PRIMARY KEY,
+    activity_score INTEGER DEFAULT 0,
+    momentum INTEGER DEFAULT 0,
+    streak INTEGER DEFAULT 0,
+    last_active TEXT,
+    topic_influence REAL DEFAULT 0,
+    multi_channel_presence INTEGER DEFAULT 0
+)
+""")
+
+c.execute("""
+CREATE TABLE IF NOT EXISTS analytics (
+    snapshot_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TEXT,
+    data TEXT
+)
+""")
+
+c.execute("""
+CREATE TABLE IF NOT EXISTS rewards (
+    reward_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id INTEGER,
+    role_id INTEGER,
+    criteria TEXT,
+    tier INTEGER,
+    last_applied TEXT
+)
+""")
+
+c.execute("""
+CREATE TABLE IF NOT EXISTS topic_settings (
+    guild_id INTEGER PRIMARY KEY,
+    channel_id INTEGER,
+    enabled INTEGER DEFAULT 1,
+    interval_minutes INTEGER DEFAULT 60,
+    ping_top_n INTEGER DEFAULT 2,
+    last_sent TEXT
+)
+""")
+
+conn.commit()
+conn.close()
